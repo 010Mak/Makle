@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Makle Search Results</title>
+    <link rel="icon" type="image/png" href="icon.png">
+    <style>
+        /* ... Existing CSS styles ... */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: flex-start;
+            align-items: flex-start;
+        }
+        .container {
+            margin: 20px;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .logo {
+            width: 320px;
+            height: 180px;
+            margin: 20px 0;
+            cursor: pointer;
+        }
+        .search-bar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 25px;
+            background-color: #ffffff;
+            width: 400px;
+            height: 50px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border: none;
+            overflow: hidden;
+        }
+        .search-input {
+            flex-grow: 1;
+            border: none;
+            padding: 10px;
+            font-size: 16px;
+            outline: none;
+            font-family: Arial, sans-serif;
+        }
+        .search-icon {
+            width: 20px;
+            height: 20px;
+            background-image: url('searchicon.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            cursor: pointer;
+            margin-right: 12px;
+        }
+        .results-container {
+            text-align: left;
+        }
+        .result {
+            margin-bottom: 20px;
+        }
+        .result h3 {
+            margin: 0;
+        }
+        .result a {
+            color: #0000EE;
+            text-decoration: none;
+        }
+        .result a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html"><img class="logo" src="logo2.png" alt="Makle Logo"></a>
+        <div class="search-bar">
+            <div class="search-icon"></div>
+            <input class="search-input" type="text" placeholder="Search">
+        </div>
+        <div class="results-container" id="results"></div>
+        <div class="pagination" id="pagination"></div>
+    </div>
+
+    <script>
+        // Add event listener for Enter key press on the search input
+        var searchInput = document.querySelector('.search-input');
+        searchInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                var query = searchInput.value;
+                // Redirect to search results page here
+                window.location.href = 'search.html?q=' + encodeURIComponent(query);
+            }
+        });
+
+        var searchQuery = decodeURIComponent(window.location.search.replace('?q=', ''));
+        var apiKey = 'AIzaSyC9msTE4oytBZF5PuVxt1M46pn1WQ7ztgU'; // Replace with your actual API key
+        var cx = '16b6cdc30857d41a1'; // Replace with your actual Custom Search Engine ID
+        var url = 'https://www.googleapis.com/customsearch/v1?key=' + apiKey + '&cx=' + cx + '&q=' + encodeURIComponent(searchQuery);
+
+        fetch(url)
+            .then(function(response) {
+                return response.json();
+            })
+            .then(function(data) {
+                displaySearchResults(data.items);
+            })
+            .catch(function(error) {
+                console.log('Error fetching search results:', error);
+            });
+
+        function displaySearchResults(results) {
+            var resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            results.forEach(function(result) {
+                var resultElement = document.createElement('div');
+                resultElement.classList.add('result');
+
+                var title = document.createElement('h3');
+                var link = document.createElement('a');
+                link.href = result.link;
+                link.textContent = result.title;
+                title.appendChild(link);
+
+                var snippet = document.createElement('p');
+                snippet.textContent = result.snippet;
+
+                resultElement.appendChild(title);
+                resultElement.appendChild(snippet);
+
+                resultsContainer.appendChild(resultElement);
+            });
+        }
+    </script>
+</body>
+</html>
